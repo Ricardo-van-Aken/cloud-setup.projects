@@ -1,0 +1,85 @@
+name: Terraform Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Project directory under projects/"
+        required: true
+        default: "example-project-1"
+        type: string
+      action:
+        description: "Terraform action"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+      auto_approve:
+        description: "Auto-approve apply/destroy"
+        required: false
+        default: "false"
+        type: boolean
+env:
+  # DigitalOcean Spaces bucket name and access key, used for terraform remote state.
+  AWS_ACCESS_KEY_ID: ${{ vars.DO_STATE_BUCKET_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_STATE_BUCKET_SECRET_KEY }}
+  
+  # Terraforms Github provider authorization
+  TF_VAR_github_organization: ${{ vars._GITHUB_ORGANIZATION_NAME }}
+  TF_VAR_github_repo_token: ${{ secrets._GITHUB_REPO_TOKEN }}
+
+jobs:
+  terraform:
+    name: Terraform (${{ inputs.project }} - ${{ inputs.action }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: projects/${{ inputs.project }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Generate Backend Configuration
+        run: |
+          source ../../scripts/common.sh
+          generate_backend_file "${{ vars.DO_STATE_BUCKET_REGION }}" "${{ vars.DO_STATE_BUCKET_NAME }}" "../backend.hcl"
+
+      - name: Terraform Init
+        run: terraform init -backend-config ../backend.hcl -backend-config="key=projects/${{ inputs.project }}/terraform.tfstate"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: inputs.action == 'plan'
+        run: terraform plan
+
+      - name: Terraform Apply
+        if: inputs.action == 'apply'
+        run: |
+          if [[ "${{ inputs.auto_approve }}" == "true" ]]; then
+            terraform apply -auto-approve
+          else
+            terraform apply
+          fi
+
+      - name: Terraform Destroy
+        if: inputs.action == 'destroy'
+        run: |
+          if [[ "${{ inputs.auto_approve }}" == "true" ]]; then
+            terraform destroy -auto-approve
+          else
+            terraform destroy
+          fi
+
+
