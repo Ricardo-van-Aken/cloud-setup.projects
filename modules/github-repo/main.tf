@@ -7,7 +7,7 @@ resource "github_repository" "this" {
   is_template = var.is_template
 
   dynamic "template" {
-    for_each = (trim(var.template_owner) != "" && trim(var.template_repository) != "") ? [1] : []
+    for_each = (trimspace(var.template_owner) != "" && trimspace(var.template_repository) != "") ? [1] : []
     content {
       owner      = var.template_owner
       repository = var.template_repository
