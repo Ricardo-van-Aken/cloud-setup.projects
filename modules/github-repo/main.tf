@@ -6,9 +6,12 @@ resource "github_repository" "this" {
   visibility = var.repository_visibility
   is_template = var.is_template
 
-  template {
-    owner      = var.template_owner
-    repository = var.template_repository
+  dynamic "template" {
+    for_each = (trim(var.template_owner) != "" && trim(var.template_repository) != "") ? [1] : []
+    content {
+      owner      = var.template_owner
+      repository = var.template_repository
+    }
   }
 }
 
