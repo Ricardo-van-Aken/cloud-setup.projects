@@ -13,13 +13,13 @@ resource "github_repository" "this" {
 }
 
 resource "github_branch" "staging" {
-  repository    = var.repository_name
+  repository    = github_repository.this.name
   branch        = "staging"
   source_branch = "main"
 }
 
 resource "github_branch" "production" {
-  repository    = var.repository_name
+  repository    = github_repository.this.name
   branch        = "production"
   source_branch = "staging"
   
@@ -37,7 +37,7 @@ resource "github_team_repository" "this" {
 # Create repository environments with team reviewers (configurable)
 resource "github_repository_environment" "this" {
   for_each   = var.environment_review_teams
-  repository = var.repository_name
+  repository = github_repository.this.name
   environment = each.key
 
   dynamic "reviewers" {
@@ -52,7 +52,7 @@ resource "github_repository_environment" "this" {
 
 # Branch protection for main branch (basic protection)
 resource "github_branch_protection" "main" {
-  repository_id = var.repository_name
+  repository_id = github_repository.this.name
   pattern       = "main"
 
   required_pull_request_reviews {
@@ -71,7 +71,7 @@ resource "github_branch_protection" "main" {
 
 # Branch protection for staging branch (basic protection)
 resource "github_branch_protection" "staging" {
-  repository_id = var.repository_name
+  repository_id = github_repository.this.name
   pattern       = "staging"
 
   required_pull_request_reviews {
@@ -92,7 +92,7 @@ resource "github_branch_protection" "staging" {
 
 # Branch protection for production branch (most restrictive - DevOps only)
 resource "github_branch_protection" "production" {
-  repository_id = var.repository_name
+  repository_id = github_repository.this.name
   pattern       = "production"
 
   required_pull_request_reviews {
