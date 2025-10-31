@@ -59,9 +59,9 @@ data "terraform_remote_state" "github-org-config" {
 module "github_repo" {
   source = "../../modules/github-repo"
 
-  repository_name        = "example-project-1"
-  repository_description = "Example project 1 repository for testing of cloud-setup.projects pipeline"
-  repository_visibility  = "private"
+  repository_name        = "cloud-setup.example-repo"
+  repository_description = "Example repository for testing of cloud-setup.projects pipeline"
+  repository_visibility  = "public"
   is_template            = false
   template_owner         = ""
   template_repository    = ""
