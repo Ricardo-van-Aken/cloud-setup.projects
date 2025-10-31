@@ -28,6 +28,12 @@ variable "github_organization" {
   type        = string
 }
 
+variable "github_repo_vars_token" {
+  description = "GitHub Personal Access Token for managing repository variables and secrets"
+  type        = string
+  sensitive   = true
+}
+
 ###############################
 ##     Repository Inputs     ##
 ###############################

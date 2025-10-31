@@ -14,6 +14,12 @@ provider "github" {
   owner = var.github_organization
 }
 
+provider "github" {
+  alias = "repo_vars"
+  token = var.github_repo_vars_token
+  owner = var.github_organization
+}
+
 data "terraform_remote_state" "do-remote-state" {
   backend = "s3"
   config = {
@@ -89,6 +95,7 @@ module "github_repo" {
 # the github plan does not support the use of organisation secrets in private repositories. You can remove this part
 # if you are using a github plan that does support this feature.
 resource "github_actions_secret" "spaces_secret_key_ci" {
+  provider      = github.repo_vars
   repository    = module.github_repo.repository_name
   secret_name   = "DO_STATE_BUCKET_SECRET_KEY"
   plaintext_value = data.terraform_remote_state.do-remote-state.outputs.bucket_spaces_secret_key_ci
