@@ -67,7 +67,6 @@ jobs:
     needs: validate-inputs
     defaults:
       run:
-        shell: bash
         working-directory: projects/${{ inputs.project }}
 
     steps:
@@ -102,8 +101,8 @@ jobs:
         with:
           name: terraform-plan-${{ inputs.project }}
           path: |
-            tfplan
-            backend.hcl
+            projects/${{ inputs.project }}/tfplan
+            projects/${{ inputs.project }}/backend.hcl
 
   apply-approved-plan:
     name: Apply (after manual approval)
@@ -113,7 +112,6 @@ jobs:
     environment: production
     defaults:
       run:
-        shell: bash
         working-directory: projects/${{ inputs.project }}
     
     steps:
