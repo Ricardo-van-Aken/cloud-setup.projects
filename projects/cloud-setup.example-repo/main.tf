@@ -69,14 +69,17 @@ module "github_repo" {
 
   # Grant teams repository access
   repository_teams = {
+    # Team responsible for the projects infrastructure.
     devops_gouda = {
       team_id    = data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
       permission = "push"
     }
+    # Team responsible for the projects development.
     development_brie = {
       team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
       permission = "push"
     }
+    # Team responsible for the projects QA(does not have push access).
     qa_parmesan = {
       team_id    = data.terraform_remote_state.github-org-config.outputs.qa_parmesan_team_id
       permission = "pull"
