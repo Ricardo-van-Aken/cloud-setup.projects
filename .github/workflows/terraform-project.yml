@@ -6,7 +6,7 @@ on:
       project:
         description: "Project directory under projects/"
         required: true
-        default: "example-project-1"
+        default: "cloud-setup.example-repo"
         type: string
       action:
         description: "Terraform action"

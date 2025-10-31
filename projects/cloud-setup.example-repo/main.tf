@@ -65,6 +65,7 @@ module "github_repo" {
   is_template            = false
   template_owner         = ""
   template_repository    = ""
+  auto_init              = true
 
   # Grant teams repository access
   repository_teams = {

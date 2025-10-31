@@ -15,6 +15,7 @@ resource "github_repository" "this" {
 
   visibility = var.repository_visibility
   is_template = var.is_template
+  auto_init   = var.auto_init
 
   dynamic "template" {
     for_each = (trimspace(var.template_owner) != "" && trimspace(var.template_repository) != "") ? [1] : []

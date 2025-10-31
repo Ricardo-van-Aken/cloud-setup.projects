@@ -21,6 +21,12 @@ variable "is_template" {
   default     = false
 }
 
+variable "auto_init" {
+  description = "Initialize the repository with a README so the default branch exists"
+  type        = bool
+  default     = true
+}
+
 variable "template_owner" {
   description = "Template repository owner"
   type        = string
