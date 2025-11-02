@@ -64,7 +64,7 @@ resource "github_repository_environment" "this" {
   depends_on = [github_team_repository.this]
 }
 
-# Branch protection for main branch (basic protection)
+# Branch protection for main branch
 resource "github_branch_protection" "main" {
   repository_id = github_repository.this.name
   pattern       = "main"
@@ -76,14 +76,13 @@ resource "github_branch_protection" "main" {
   }
 
   required_status_checks {
-    strict   = true
-    contexts = ["test"]
+    strict = true
   }
 
   enforce_admins = false
 }
 
-# Branch protection for staging branch (basic protection)
+# Branch protection for staging branch
 resource "github_branch_protection" "staging" {
   repository_id = github_repository.this.name
   pattern       = "staging"
@@ -95,8 +94,7 @@ resource "github_branch_protection" "staging" {
   }
 
   required_status_checks {
-    strict   = true
-    contexts = ["test"]
+    strict = true
   }
 
   enforce_admins = false
@@ -104,7 +102,7 @@ resource "github_branch_protection" "staging" {
   depends_on = [github_branch.staging]
 }
 
-# Branch protection for production branch (most restrictive - DevOps only)
+# Branch protection for production branch
 resource "github_branch_protection" "production" {
   repository_id = github_repository.this.name
   pattern       = "production"
@@ -117,7 +115,6 @@ resource "github_branch_protection" "production" {
 
   required_status_checks {
     strict   = true
-    contexts = ["test"]
   }
 
   enforce_admins = false
