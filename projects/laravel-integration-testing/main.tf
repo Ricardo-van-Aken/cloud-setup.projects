@@ -14,30 +14,6 @@ provider "github" {
   owner = var.github_organization
 }
 
-provider "github" {
-  alias = "repo_vars"
-  token = var.github_repo_vars_token
-  owner = var.github_organization
-}
-
-data "terraform_remote_state" "do-remote-state" {
-  backend = "s3"
-  config = {
-    endpoints = {
-      s3 = "https://${var.region}.digitaloceanspaces.com"
-    }
-    bucket                      = "${var.bucket_name}"
-    key                         = "foundation/digitalocean-remote-state/terraform.tfstate"
-    region                      = "us-east-1"
-    skip_credentials_validation = true
-    skip_requesting_account_id  = true
-    skip_metadata_api_check     = true
-    skip_region_validation      = true
-    skip_s3_checksum            = true
-    use_lockfile                = true
-  }
-}
-
 data "terraform_remote_state" "github-org-config" {
   backend = "s3"
   config = {
@@ -59,13 +35,13 @@ data "terraform_remote_state" "github-org-config" {
 module "github_repo" {
   source = "../../modules/github-repo"
 
-  repository_name        = "starterkit.laravel-react-docker"
-  repository_description = "Starterkit repository for Laravel, Inertia and React with Docker"
+  repository_name        = "laravel-integration-testing"
+  repository_description = "Integration testing package for Laravel. This package makes requests with the X-TESTING header use a different database connection specifically for testing purposes.."
   repository_visibility  = "public"
   is_template            = true
-  template_owner         = "Zeepaardje98"
-  template_repository    = "Laravel-React-Dockerized"
-  auto_init              = false
+  template_owner         = ""
+  template_repository    = ""
+  auto_init              = true
 
   # Grant teams repository access
   repository_teams = {
@@ -93,14 +69,4 @@ module "github_repo" {
       data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
     ]
   }
-}
-
-# Overwrite some private variables from the organization secrets by placing them in the repository secrets, in case
-# the github plan does not support the use of organisation secrets in private repositories. You can remove this part
-# if you are using a github plan that does support this feature.
-resource "github_actions_secret" "spaces_secret_key_ci" {
-  provider      = github.repo_vars
-  repository    = module.github_repo.repository_name
-  secret_name   = "DO_STATE_BUCKET_SECRET_KEY"
-  plaintext_value = data.terraform_remote_state.do-remote-state.outputs.bucket_spaces_secret_key_ci
 }
