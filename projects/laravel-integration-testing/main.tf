@@ -35,13 +35,13 @@ data "terraform_remote_state" "github-org-config" {
 module "github_repo" {
   source = "../../modules/github-repo"
 
-  repository_name        = "laravel-integration-testing"
-  repository_description = "Integration testing package for Laravel. This package makes requests with the X-TESTING header use a different database connection specifically for testing purposes.."
+  repository_name        = "pest-plugin-integration-tests"
+  repository_description = "Integration testing package for Laravel using Pest. This package makes requests with the X-TESTING header use a different database connection specifically for testing purposes.."
   repository_visibility  = "public"
   is_template            = true
-  template_owner         = ""
-  template_repository    = ""
-  auto_init              = true
+  template_owner         = "pestphp"
+  template_repository    = "pest-plugin-template"
+  auto_init              = false
 
   # Grant teams repository access
   repository_teams = {
