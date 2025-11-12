@@ -38,7 +38,7 @@ module "github_repo" {
   repository_name        = "pest-plugin-integration-tests"
   repository_description = "Integration testing package for Laravel using Pest. This package makes requests with the X-TESTING header use a different database connection specifically for testing purposes.."
   repository_visibility  = "public"
-  is_template            = true
+  is_template            = false
   template_owner         = "pestphp"
   template_repository    = "pest-plugin-template"
   auto_init              = false
