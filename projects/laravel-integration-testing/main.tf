@@ -3,10 +3,10 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "~> 6.0"
+      version = "~> 6.7.3"
     }
   }
-  backend "s3" {}
+  # backend "s3" {}
 }
 
 provider "github" {
