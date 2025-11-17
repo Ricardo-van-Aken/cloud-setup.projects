@@ -35,8 +35,8 @@ data "terraform_remote_state" "github-org-config" {
 module "github_repo" {
   source = "../../modules/github-repo"
 
-  repository_name        = "pest-plugin-integration-tests"
-  repository_description = "Integration testing package for Laravel using Pest. This package makes requests with the X-TESTING header use a different database connection specifically for testing purposes.."
+  repository_name        = "pest-plugin-e2e-tests"
+  repository_description = "End-to-end testing package for Laravel using Pest. This package makes real HTTP(S) requests with the X-TESTING header, and make the laravel application swap to a different database connection within the same cluster, specifically for testing purposes.."
   repository_visibility  = "public"
   is_template            = false
   template_owner         = "pestphp"
