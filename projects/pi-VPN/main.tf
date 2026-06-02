@@ -32,41 +32,51 @@ data "terraform_remote_state" "github-org-config" {
   }
 }
 
-module "github_repo" {
-  source = "../../modules/github-repo"
+resource "github_repository" "this" {
+  name        = "pi-VPN"
+  description = "Raspberry Pi VPN setup and configuration"
+  visibility  = "private"
+  is_template = false
+  auto_init   = false
+}
 
-  repository_name        = "pi-VPN"
-  repository_description = "Raspberry Pi VPN setup and configuration"
-  repository_visibility  = "private"
-  is_template            = false
-  template_owner         = ""
-  template_repository    = ""
-  auto_init              = false
+resource "github_team_repository" "development_brie" {
+  team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
+  repository = github_repository.this.name
+  permission = "push"
+}
 
-  # Grant teams repository access
-  repository_teams = {
-    # Team responsible for the projects infrastructure.
-    devops_gouda = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
-      permission = "push"
-    }
-    # Team responsible for the projects development.
-    development_brie = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
-      permission = "push"
-    }
-    # Team responsible for the projects QA(does not have push access).
-    qa_parmesan = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.qa_parmesan_team_id
-      permission = "pull"
-    }
+resource "github_branch_protection" "main" {
+  repository_id = github_repository.this.name
+  pattern       = "main"
+
+  required_pull_request_reviews {
+    required_approving_review_count = 1
+    dismiss_stale_reviews           = true
+    require_code_owner_reviews      = true
   }
 
-  # Require approvals from DevOps (production) and none for staging
-  environment_review_teams = {
-    staging    = []
-    production = [
-      data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
-    ]
+  required_status_checks {
+    strict = true
   }
+
+  enforce_admins = false
+}
+
+# Migrate state from the previous module-based layout. Resources not listed here
+# (staging/production branches, their protections, environments) are intentionally
+# absent from the config and will be destroyed on the next apply.
+moved {
+  from = module.github_repo.github_repository.this
+  to   = github_repository.this
+}
+
+moved {
+  from = module.github_repo.github_team_repository.this["development_brie"]
+  to   = github_team_repository.development_brie
+}
+
+moved {
+  from = module.github_repo.github_branch_protection.main
+  to   = github_branch_protection.main
 }
