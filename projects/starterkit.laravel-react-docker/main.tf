@@ -152,10 +152,6 @@ import {
   id = "starterkit.laravel-react-docker:staging"
 }
 
-import {
-  to = module.github_repo.github_branch_protection.production
-  id = "starterkit.laravel-react-docker:production"
-}
 
 import {
   to = github_actions_secret.spaces_secret_key_ci
