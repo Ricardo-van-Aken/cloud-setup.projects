@@ -30,14 +30,23 @@ resource "github_branch" "staging" {
   repository    = github_repository.this.name
   branch        = "staging"
   source_branch = "main"
+
+  # source_branch only affects creation; ignore drift so re-imports don't force replacement.
+  lifecycle {
+    ignore_changes = [source_branch]
+  }
 }
 
 resource "github_branch" "production" {
   repository    = github_repository.this.name
   branch        = "production"
   source_branch = "staging"
-  
+
   depends_on = [github_branch.staging]
+
+  lifecycle {
+    ignore_changes = [source_branch]
+  }
 }
 
 # Add team access to the repository (from input map)
