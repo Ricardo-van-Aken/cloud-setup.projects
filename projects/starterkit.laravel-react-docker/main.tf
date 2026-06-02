@@ -58,8 +58,8 @@ module "github_repo" {
   repository_description = "Starterkit repository for Laravel, Inertia and React with Docker"
   repository_visibility  = "public"
   is_template            = true
-  template_owner         = "Zeepaardje98"
-  template_repository    = "Laravel-React-Dockerized"
+  template_owner         = "Ricardo-van-Aken"
+  template_repository    = "starterkit.laravel-react-docker"
   auto_init              = false
 
   # Grant teams repository access
