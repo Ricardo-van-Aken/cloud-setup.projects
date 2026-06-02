@@ -109,12 +109,12 @@ import {
 
 import {
   to = module.github_repo.github_branch.staging
-  id = "starterkit.laravel-react-docker:staging"
+  id = "starterkit.laravel-react-docker:staging:main"
 }
 
 import {
   to = module.github_repo.github_branch.production
-  id = "starterkit.laravel-react-docker:production"
+  id = "starterkit.laravel-react-docker:production:staging"
 }
 
 import {
