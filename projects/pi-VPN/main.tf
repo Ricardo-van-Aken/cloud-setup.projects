@@ -40,22 +40,10 @@ resource "github_repository" "this" {
   auto_init   = false
 }
 
-resource "github_team_repository" "devops_gouda" {
-  team_id    = data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
-  repository = github_repository.this.name
-  permission = "push"
-}
-
 resource "github_team_repository" "development_brie" {
   team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
   repository = github_repository.this.name
   permission = "push"
-}
-
-resource "github_team_repository" "qa_parmesan" {
-  team_id    = data.terraform_remote_state.github-org-config.outputs.qa_parmesan_team_id
-  repository = github_repository.this.name
-  permission = "pull"
 }
 
 resource "github_branch_protection" "main" {
@@ -84,18 +72,8 @@ moved {
 }
 
 moved {
-  from = module.github_repo.github_team_repository.this["devops_gouda"]
-  to   = github_team_repository.devops_gouda
-}
-
-moved {
   from = module.github_repo.github_team_repository.this["development_brie"]
   to   = github_team_repository.development_brie
-}
-
-moved {
-  from = module.github_repo.github_team_repository.this["qa_parmesan"]
-  to   = github_team_repository.qa_parmesan
 }
 
 moved {
