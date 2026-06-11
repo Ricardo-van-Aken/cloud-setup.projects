@@ -45,16 +45,3 @@ resource "github_team_repository" "development_brie" {
   repository = github_repository.this.name
   permission = "push"
 }
-
-# Migrate state from the previous module-based layout. Resources not listed here
-# (staging/production branches, all branch protections, environments, devops/qa teams)
-# are intentionally absent from the config and will be destroyed on the next apply.
-moved {
-  from = module.github_repo.github_repository.this
-  to   = github_repository.this
-}
-
-moved {
-  from = module.github_repo.github_team_repository.this["development_brie"]
-  to   = github_team_repository.development_brie
-}
