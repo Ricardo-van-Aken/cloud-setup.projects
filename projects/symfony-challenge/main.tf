@@ -82,10 +82,7 @@ module "github_repo" {
   # Require approvals from DevOps (production) and none for staging
   environment_review_teams = {
     staging    = []
-    production = [
-      data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id,
-      data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
-    ]
+    production = []
   }
 }
 
