@@ -1,0 +1,16 @@
+.git
+.github
+.devcontainer
+.gitignore
+.dockerignore
+Dockerfile
+LICENSE
+
+# Terraform state and local files
+**/.terraform
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfvars
+**/*.tfvars.json
+**/crash.log
+**/crash.*.log

@@ -28,8 +28,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=builder /usr/local/bin/tofu /usr/local/bin/tofu
 
-COPY projects/ /workspace/projects/
-COPY modules/ /workspace/modules/
-COPY scripts/ /workspace/scripts/
+COPY . /workspace/
 
 WORKDIR /workspace
