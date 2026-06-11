@@ -3,7 +3,7 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "~> 6.0"
+      version = "~> 6.7.3"
     }
   }
   backend "s3" {}
@@ -51,15 +51,12 @@ data "terraform_remote_state" "github-org-config" {
   }
 }
 
-module "github_repo" {
-  source = "../../modules/github-repo"
-
-  repository_name        = "symfony-challenge"
-  repository_description = "A small coding challenge in the Symfony PHP framework, part of my application for API Engineer at NEP Group Netherlands"
-  repository_visibility  = "private"
-  is_template            = false
-  auto_init              = true
-
+resource "github_repository" "this" {
+  name        = "symfony-challenge"
+  description = "A small coding challenge in the Symfony PHP framework, part of my application for API Engineer at NEP Group Netherlands"
+  visibility  = "private"
+  is_template = false
+  auto_init   = true
 }
 
 resource "github_team_repository" "development_brie" {
@@ -72,7 +69,20 @@ resource "github_team_repository" "development_brie" {
 # the github plan does not support the use of organisation secrets in private repositories. You can remove this part
 # if you are using a github plan that does support this feature.
 resource "github_actions_secret" "spaces_secret_key_ci" {
-  repository      = module.github_repo.repository_name
+  repository      = github_repository.this.name
   secret_name     = "DO_STATE_BUCKET_SECRET_KEY"
   plaintext_value = data.terraform_remote_state.do-remote-state.outputs.bucket_spaces_secret_key_ci
+}
+
+# Migrate state from the previous module-based layout. Resources not listed here
+# (staging/production branches, all branch protections, environments, devops/qa teams)
+# are intentionally absent from the config and will be destroyed on the next apply.
+moved {
+  from = module.github_repo.github_repository.this
+  to   = github_repository.this
+}
+
+moved {
+  from = module.github_repo.github_team_repository.this["development_brie"]
+  to   = github_team_repository.development_brie
 }
