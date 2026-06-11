@@ -58,32 +58,14 @@ module "github_repo" {
   repository_description = "A small coding challenge in the Symfony PHP framework, part of my application for API Engineer at NEP Group Netherlands"
   repository_visibility  = "private"
   is_template            = false
-  auto_init              = false
+  auto_init              = true
 
-  # Grant teams repository access
-  repository_teams = {
-    # Team responsible for the projects infrastructure.
-    devops_gouda = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.devops_gouda_team_id
-      permission = "push"
-    }
-    # Team responsible for the projects development.
-    development_brie = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
-      permission = "push"
-    }
-    # Team responsible for the projects QA(does not have push access).
-    qa_parmesan = {
-      team_id    = data.terraform_remote_state.github-org-config.outputs.qa_parmesan_team_id
-      permission = "pull"
-    }
-  }
+}
 
-  # Require approvals from DevOps (production) and none for staging
-  environment_review_teams = {
-    staging    = []
-    production = []
-  }
+resource "github_team_repository" "development_brie" {
+  team_id    = data.terraform_remote_state.github-org-config.outputs.development_brie_team_id
+  repository = github_repository.this.name
+  permission = "push"
 }
 
 # Overwrite some private variables from the organization secrets by placing them in the repository secrets, in case
