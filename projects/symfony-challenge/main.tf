@@ -54,8 +54,8 @@ data "terraform_remote_state" "github-org-config" {
 module "github_repo" {
   source = "../../modules/github-repo"
 
-  repository_name        = "symphony-challenge"
-  repository_description = "A small coding challenge in the Symphony framework, part of my application for API Engineer at NEP Group Netherlands"
+  repository_name        = "symfony-challenge"
+  repository_description = "A small coding challenge in the Symfony PHP framework, part of my application for API Engineer at NEP Group Netherlands"
   repository_visibility  = "private"
   is_template            = false
   auto_init              = false
