@@ -65,13 +65,37 @@ resource "github_team_repository" "development_brie" {
   permission = "push"
 }
 
-# Overwrite some private variables from the organization secrets by placing them in the repository secrets, in case
-# the github plan does not support the use of organisation secrets in private repositories. You can remove this part
-# if you are using a github plan that does support this feature.
+# Mirror the organization-level secrets and variables onto the repository, in case the github plan does not support
+# the use of organisation secrets/variables in private repositories. You can remove this part if you are using a
+# github plan that does support this feature.
 resource "github_actions_secret" "spaces_secret_key_ci" {
   repository      = github_repository.this.name
   secret_name     = "DO_STATE_BUCKET_SECRET_KEY"
   plaintext_value = data.terraform_remote_state.do-remote-state.outputs.bucket_spaces_secret_key_ci
+}
+
+resource "github_actions_variable" "spaces_access_key_ci" {
+  repository    = github_repository.this.name
+  variable_name = "DO_STATE_BUCKET_ACCESS_KEY"
+  value         = data.terraform_remote_state.do-remote-state.outputs.bucket_spaces_access_key_ci
+}
+
+resource "github_actions_variable" "organization_name" {
+  repository    = github_repository.this.name
+  variable_name = "_GITHUB_ORGANIZATION_NAME"
+  value         = var.github_organization
+}
+
+resource "github_actions_variable" "do_bucket_name" {
+  repository    = github_repository.this.name
+  variable_name = "DO_STATE_BUCKET_NAME"
+  value         = data.terraform_remote_state.do-remote-state.outputs.bucket_name
+}
+
+resource "github_actions_variable" "do_bucket_region" {
+  repository    = github_repository.this.name
+  variable_name = "DO_STATE_BUCKET_REGION"
+  value         = data.terraform_remote_state.do-remote-state.outputs.region
 }
 
 # Migrate state from the previous module-based layout. Resources not listed here
